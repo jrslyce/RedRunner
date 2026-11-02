@@ -76,6 +76,10 @@ namespace RedRunner.Characters
 		protected int m_CurrentFootstepSoundIndex = 0;
 		protected Vector3 m_InitialScale;
 		protected Vector3 m_InitialPosition;
+		private float m_JumpBoostUntil;
+		private float m_JumpMultiplier = 1f;
+		private float m_SpeedBoostUntil;
+		private float m_SpeedMultiplier = 1f;
 
 		#endregion
 
@@ -291,10 +295,11 @@ namespace RedRunner.Characters
 			m_Speed = new Vector2 ( Mathf.Abs ( m_Rigidbody2D.linearVelocity.x ), Mathf.Abs ( m_Rigidbody2D.linearVelocity.y ) );
 
 			// Speed Calculations
-			m_CurrentRunSpeed = m_RunSpeed;
+			float speedMultiplier = Time.realtimeSinceStartup < m_SpeedBoostUntil ? m_SpeedMultiplier : 1f;
+			m_CurrentRunSpeed = m_RunSpeed * speedMultiplier;
 			if ( m_Speed.x >= m_RunSpeed )
 			{
-				m_CurrentRunSpeed = Mathf.SmoothDamp ( m_Speed.x, m_MaxRunSpeed, ref m_CurrentSmoothVelocity, m_RunSmoothTime );
+				m_CurrentRunSpeed = Mathf.SmoothDamp ( m_Speed.x, m_MaxRunSpeed * speedMultiplier, ref m_CurrentSmoothVelocity, m_RunSmoothTime );
 			}
 
 			// Input Processing
@@ -453,7 +458,7 @@ namespace RedRunner.Characters
 				if ( m_GroundCheck.IsGrounded )
 				{
 					Vector2 velocity = m_Rigidbody2D.linearVelocity;
-					velocity.y = m_JumpStrength;
+					velocity.y = m_JumpStrength * (Time.realtimeSinceStartup < m_JumpBoostUntil ? m_JumpMultiplier : 1f);
 					m_Rigidbody2D.linearVelocity = velocity;
 					m_Animator.ResetTrigger ( "Jump" );
 					m_Animator.SetTrigger ( "Jump" );
@@ -501,9 +506,25 @@ namespace RedRunner.Characters
 			m_Guard = false;
 			m_Block = false;
 			m_CurrentFootstepSoundIndex = 0;
+			m_JumpBoostUntil = 0f;
+			m_JumpMultiplier = 1f;
+			m_SpeedBoostUntil = 0f;
+			m_SpeedMultiplier = 1f;
 			transform.localScale = m_InitialScale;
 			m_Rigidbody2D.linearVelocity = Vector2.zero;
 			m_Skeleton.SetActive ( false, m_Rigidbody2D.linearVelocity );
+		}
+
+		public void ApplyJumpBoost(float multiplier, float durationSeconds)
+		{
+			m_JumpMultiplier = Mathf.Clamp(multiplier, 0.6f, 2f);
+			m_JumpBoostUntil = Time.realtimeSinceStartup + Mathf.Max(0f, durationSeconds);
+		}
+
+		public void ApplySpeedBoost(float multiplier, float durationSeconds)
+		{
+			m_SpeedMultiplier = Mathf.Clamp(multiplier, 0.8f, 1.5f);
+			m_SpeedBoostUntil = Time.realtimeSinceStartup + Mathf.Max(0f, durationSeconds);
 		}
 
 		#endregion

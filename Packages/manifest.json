@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.muxy.gateway": "https://github.com/jrslyce/gateway-unity.git#codex/hypeline-developer-readiness",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.2d.tilemap": "1.0.0",
     "com.unity.ai.navigation": "2.0.9",
@@ -42,6 +43,7 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0"
+    "com.unity.modules.xr": "1.0.0",
+    "com.unity.pipeline": "0.9.1-exp.1"
   }
 }

@@ -82,6 +82,9 @@ namespace RedRunner
                 return m_AudioEnabled;
             }
         }
+
+        public Character MainCharacter => m_MainCharacter;
+        public float Score => m_Score;
         #endregion
 
         void Awake()
